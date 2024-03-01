@@ -2,13 +2,14 @@
 
 
 
-import Routers from "./routes/Routers";
+import { Outlet } from 'react-router-dom';
 import './App.css'
+
 function App() {
   return (
-    <div>
+    <div className="App">
       
-      <Routers />
+      <Outlet />
       
       
     </div>
