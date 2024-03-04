@@ -1,51 +1,34 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const authRoutes = require('./routes/auth.js');
+const userRoutes = require('./routes/user.js');
+
+
 const app = express();
-const mysql = require("mysql");
-const bcrypt = require('bcrypt');
-const users=[];
+app.use(bodyParser.json());
+app.use(cors());
+app.use('/users', userRoutes);
+app.use('/', authRoutes);
 
-app.use(express.json());
 
-app.post("/register",async(req,res)=>{
-  try{
-    const{email,password}=req.body;
-    //find user 
-    const findUser=users.find((data) => email == data.email);
-    if(findUser){
-        res.status(400).send("email already exists");
-    } else {
-        const hashedPassword = await bcrypt.hash(password,10);
-        users.push({email, password: hashedPassword});
-        console.log(users);
-        res.status(201).send("Registered successfully");
-    }
-  } catch (err){
-    res.status(500).send({message: err.message});
-  }
+
+app.listen(3004, () => {
+    console.log(`Server is running on port 3004`);
 });
+ 
+/*
+app.post('/add', (req, res) => {
+    const username = "maherghariani";
+    const password = "789456123";
 
-app.post("/login",async(req,res)=>{
-    try {
-        const {email, password} = req.body;
-        const findUser = users.find((data) => email == data.email);
-        if (!findUser) {
-            res.status(400).send("Email or password is incorrect");
-        } else {
-            const passwordMatch = await bcrypt.compare(password, findUser.password);
-            if (passwordMatch) {
-                res.status(200).send("Logged in successfully");
-            } else {
-                res.status(400).send("Email or password is incorrect");
-            }
+    const addUserQuery = "INSERT INTO users (username, password) VALUES (?, ?)";
+    connection.query(addUserQuery, [username, password], (error, results, fields) => {
+        if (error) {
+            console.error('Error inserting user:', error);
+            return res.status(500).send('Error creating user.');
         }
-    } catch (err) {
-        res.status(500).send({message: err.message});
-    }
+        res.status(201).send('User created successfully.');
+    });
 });
-
-app.listen(3002, () => {
-    console.log('Server started on port 3002');
-    console.log('nodemon working');
-    
-   
-});
+*/
