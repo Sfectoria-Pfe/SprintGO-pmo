@@ -1,53 +1,134 @@
-import {React ,useState} from 'react';
-import { Link } from 'react-router-dom';
+import * as React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import CssBaseline from '@mui/material/CssBaseline';
+import TextField from '@mui/material/TextField';
+
+import Link from '@mui/material/Link';
+import Grid from '@mui/material/Grid';
+import Box from '@mui/material/Box';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useSignup } from '../../hooks/useSignup';
-import './Style.css'
-import { AiOutlineMail } from "react-icons/ai";
-import { FaRegUser } from "react-icons/fa";
-import { RiLockPasswordLine } from "react-icons/ri";
 
-
-const Signup = () => {
-  const[email,setEmail] = useState('')
-  const  [password, setPassword] = useState('')
-  const  [username, setUsername] = useState('')
-  const{signup, error, isLoading} = useSignup()
-
-  const handleSubmit = async (e) =>{
-    e.preventDefault()
-    console.log(email, username, password)
-    await signup(email, username, password)
-  }
-
+function Copyright(props) {
   return (
-  
-    <div>
-      
-   
-    <div className="container">
-      <div className="form">
-        <form action="" method="post" onSubmit={handleSubmit}>
-          <label htmlFor="email" ><AiOutlineMail /> Email</label><br />
-          <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} id="email" name="email" autoComplete="off" placeholder="enter a valid email" required /><br /><br />
-
-          <label htmlFor="username"><FaRegUser /> Username</label><br />
-          <input type="text" onChange={(e) => setUsername(e.target.value)} value={username} id="username" name="username" autoComplete="off" placeholder="developer" required /><br /><br />
-
-          <label htmlFor="password"><RiLockPasswordLine /> Password </label><br />
-          <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} id="password" name="password" required /><br /><br />
-
-          <label htmlFor="password2"><RiLockPasswordLine />  Confirm Password</label><br />
-          <input type="password" id="password2" name="password2" required /><br /><br />
-
-          <input type="submit" value="SignUp" disabled={isLoading} id="log" /><br /><br />
-
-          <p>Already have an account? <Link to="/login">Login</Link></p>
-          {error && <div className="error">{error}</div>}
-        </form>
-      </div>
-    </div>
-    </div>
+    <Typography variant="body2" color="white" align="center" {...props}>
+      {'Copyright © '}
+      <Link color="inherit" href="https://mui.com/">
+        sprintGo
+      </Link>{' '}
+      {new Date().getFullYear()}
+      {'.'}
+    </Typography>
   );
 }
 
-export default Signup;
+// TODO remove, this demo shouldn't need to reset the theme.
+
+const defaultTheme = createTheme();
+
+export default function SignUp() {
+  const {signup} = useSignup()
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get('email'),
+      password: data.get('password'),
+    });
+    await signup(data.get('firstName'),data.get('lastName'),data.get('email'),data.get('password'))
+  };
+
+  return (
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            backgroundColor: 'white',
+            padding: '40px', // Add padding
+            borderRadius: '10px', // Add border radius
+            boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.1)', // Add box shadow
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+            Sign up
+          </Typography>
+          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="firstName"
+                  required
+                  fullWidth
+                  id="firstName"
+                  label="First Name"
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="lastName"
+                  label="Last Name"
+                  name="lastName"
+                  autoComplete="family-name"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                />
+              </Grid>
+              
+            </Grid>
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign Up
+            </Button>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="#" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+        <Copyright sx={{ mt: 5 }} />
+      </Container>
+    </ThemeProvider>
+  );
+}
